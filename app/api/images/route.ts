@@ -1,8 +1,6 @@
-// app/api/images/route.ts
-
 import { Firestore } from "@google-cloud/firestore";
 import { Storage } from "@google-cloud/storage";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // --- NEW DEBUGGING AND AUTHENTICATION LOGIC ---
 let firestore: Firestore;
@@ -48,7 +46,7 @@ try {
 // IMPORTANT: Replace with your BUCKET name that contains the processed images
 const BUCKET_NAME = "js-image-landing"; // <-- Make sure this is correct
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
 	console.log(
 		`--- /api/images GET endpoint hit at ${new Date().toISOString()} ---`
 	);
