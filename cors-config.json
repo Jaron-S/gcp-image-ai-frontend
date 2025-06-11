@@ -1,6 +1,10 @@
 [
 	{
-		"origin": ["http://localhost:3000", "https://image-processor.jaron-s.com"],
+		"origin": [
+			"http://localhost:3000",
+			"https://image-processor.jaron-s.com",
+			"https://gcp-image-ai.netlify.app"
+		],
 		"method": ["GET", "PUT", "HEAD"],
 		"responseHeader": ["Content-Type", "Access-Control-Allow-Origin"],
 		"maxAgeSeconds": 3600
