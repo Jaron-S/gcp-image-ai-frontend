@@ -48,7 +48,7 @@ export default function HomePage() {
 					Cloud Vision Showcase
 				</h1>
 				<p className="mt-3 max-w-2xl mx-auto text-lg md:text-xl text-gray-500">
-					Upload an image to see it analyzed by Google's AI in real-time.
+					Upload an image to see it analyzed by Google&apos;s AI in real-time.
 				</p>
 			</header>
 

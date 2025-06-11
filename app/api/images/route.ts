@@ -1,6 +1,6 @@
 import { Firestore } from "@google-cloud/firestore";
 import { Storage } from "@google-cloud/storage";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 let firestore: Firestore;
 let storage: Storage;
@@ -21,7 +21,7 @@ if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
 
 const BUCKET_NAME = "js-image-landing";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
 	try {
 		const imagesCollection = firestore.collection("images");
 

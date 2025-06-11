@@ -25,8 +25,8 @@ export default function PrivacyPolicyPage() {
 							<p className="text-slate-600 leading-relaxed">
 								This Privacy Policy describes how we collect, use, and handle
 								your information when you use the Cloud Vision Showcase (the
-								"Service"). Your privacy is important to us and we are committed
-								to protecting it.
+								&quot;Service&quot;). Your privacy is important to us and we are
+								committed to protecting it.
 							</p>
 						</section>
 
@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
 							<p className="text-slate-600 leading-relaxed mb-5">
 								This Service relies on Google Cloud Platform to function. Your
 								data is processed by Google services, which are subject to
-								Google's own privacy policies:
+								Google&apos;s own privacy policies:
 							</p>
 							<ul className="list-disc list-outside pl-5 space-y-3 text-slate-600">
 								<li>

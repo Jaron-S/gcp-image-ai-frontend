@@ -31,21 +31,24 @@ export function ImageUpload({ onUploadSuccess }: ImageUploadProps) {
 	const [message, setMessage] = useState("");
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-	const cleanupPolling = () => {
+	const cleanupPolling = useCallback(() => {
 		if (intervalRef.current) clearInterval(intervalRef.current);
-	};
+	}, []);
 
-	const resetState = () => {
+	const resetState = useCallback(() => {
 		setFile(null);
 		setStatus("idle");
 		setMessage("");
 		cleanupPolling();
-	};
+	}, [cleanupPolling]);
 
-	const onDrop = useCallback((acceptedFiles: File[]) => {
-		resetState();
-		if (acceptedFiles.length > 0) setFile(acceptedFiles[0]);
-	}, []);
+	const onDrop = useCallback(
+		(acceptedFiles: File[]) => {
+			resetState();
+			if (acceptedFiles.length > 0) setFile(acceptedFiles[0]);
+		},
+		[resetState]
+	);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
@@ -53,37 +56,40 @@ export function ImageUpload({ onUploadSuccess }: ImageUploadProps) {
 		multiple: false,
 	});
 
-	const pollForProcessing = (filename: string) => {
-		setStatus("processing");
-		setMessage("Upload complete! The AI is now analyzing your image...");
+	const pollForProcessing = useCallback(
+		(filename: string) => {
+			setStatus("processing");
+			setMessage("Upload complete! The AI is now analyzing your image...");
 
-		let attempts = 0;
-		const maxAttempts = 20;
+			let attempts = 0;
+			const maxAttempts = 20;
 
-		intervalRef.current = setInterval(async () => {
-			attempts++;
-			try {
-				const response = await fetch(`/api/status?filename=${filename}`);
-				const data = await response.json();
+			intervalRef.current = setInterval(async () => {
+				attempts++;
+				try {
+					const response = await fetch(`/api/status?filename=${filename}`);
+					const data = await response.json();
 
-				if (response.ok && data.status === "processed") {
+					if (response.ok && data.status === "processed") {
+						cleanupPolling();
+						setStatus("success");
+						setMessage("Analysis complete!");
+						onUploadSuccess();
+						setTimeout(resetState, 2000);
+					} else if (attempts > maxAttempts) {
+						throw new Error("Processing took too long.");
+					}
+				} catch (error) {
 					cleanupPolling();
-					setStatus("success");
-					setMessage("Analysis complete!");
-					onUploadSuccess();
-					setTimeout(resetState, 2000);
-				} else if (attempts > maxAttempts) {
-					throw new Error("Processing took too long.");
+					setStatus("error");
+					setMessage(
+						error instanceof Error ? error.message : "An error occurred."
+					);
 				}
-			} catch (error) {
-				cleanupPolling();
-				setStatus("error");
-				setMessage(
-					error instanceof Error ? error.message : "An error occurred."
-				);
-			}
-		}, 2500);
-	};
+			}, 2500);
+		},
+		[onUploadSuccess, cleanupPolling, resetState]
+	);
 
 	const handleUpload = async () => {
 		if (!file) return;

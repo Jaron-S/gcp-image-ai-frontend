@@ -23,9 +23,9 @@ export default function TermsOfServicePage() {
 								1. Acceptance of Terms
 							</h2>
 							<p className="text-slate-600 leading-relaxed">
-								By accessing and using Cloud Vision Showcase (the "Service"),
-								you accept and agree to be bound by the terms and provision of
-								this agreement.
+								By accessing and using Cloud Vision Showcase (the
+								&quot;Service&quot;), you accept and agree to be bound by the
+								terms and provision of this agreement.
 							</p>
 
 							{/* This callout block makes the key purpose stand out. */}
@@ -44,7 +44,7 @@ export default function TermsOfServicePage() {
 							</h2>
 							<p className="text-slate-600 leading-relaxed mb-5">
 								You are solely responsible for the images you upload
-								("Content"). You agree not to upload any Content that:
+								(&quot;Content&quot;). You agree not to upload any Content that:
 							</p>
 							<ul className="list-disc list-outside pl-5 space-y-3 text-slate-600">
 								<li>
@@ -52,8 +52,8 @@ export default function TermsOfServicePage() {
 									obscene, or otherwise objectionable.
 								</li>
 								<li>
-									Infringes on any third party's intellectual property rights,
-									including copyright, trademark, or patent.
+									Infringes on any third party&apos;s intellectual property
+									rights, including copyright, trademark, or patent.
 								</li>
 								<li>
 									Contains software viruses or any other computer code, files,
@@ -99,9 +99,10 @@ export default function TermsOfServicePage() {
 								5. Disclaimer of Warranties
 							</h2>
 							<p className="text-slate-600 leading-relaxed">
-								The Service is provided "as is" and "as available" without any
-								warranties of any kind, either express or implied. We do not
-								warrant that the service will be uninterrupted or error-free.
+								The Service is provided &quot;as is&quot; and &quot;as
+								available&quot; without any warranties of any kind, either
+								express or implied. We do not warrant that the service will be
+								uninterrupted or error-free.
 							</p>
 						</section>
 
