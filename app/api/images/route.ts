@@ -2,7 +2,7 @@
 
 import { Firestore } from "@google-cloud/firestore";
 import { Storage } from "@google-cloud/storage";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // --- NEW DEBUGGING AND AUTHENTICATION LOGIC ---
 let firestore: Firestore;
@@ -48,10 +48,11 @@ try {
 // IMPORTANT: Replace with your BUCKET name that contains the processed images
 const BUCKET_NAME = "js-image-landing"; // <-- Make sure this is correct
 
-export async function GET() {
-	console.log("--- /api/images GET endpoint hit ---");
+export async function GET(_request: NextRequest) {
+	console.log(
+		`--- /api/images GET endpoint hit at ${new Date().toISOString()} ---`
+	);
 
-	// If authentication failed when the function started, return an error immediately.
 	if (authError || !firestore || !storage) {
 		return NextResponse.json(
 			{
@@ -64,16 +65,22 @@ export async function GET() {
 	}
 
 	try {
+		// --- NEW LOGS TO PINPOINT TIMEOUT ---
+		console.log("Step 1: Querying Firestore for image documents...");
 		const imagesCollection = firestore.collection("images");
 		const snapshot = await imagesCollection
 			.orderBy("processedTimestamp", "desc")
 			.limit(6)
 			.get();
+		console.log(
+			`Step 2: Firestore query successful. Found ${snapshot.size} documents.`
+		);
 
 		if (snapshot.empty) {
 			return NextResponse.json([]);
 		}
 
+		console.log("Step 3: Generating Signed URLs for each document...");
 		const images = await Promise.all(
 			snapshot.docs.map(async (doc) => {
 				const data = doc.data();
@@ -81,7 +88,7 @@ export async function GET() {
 
 				const [url] = await file.getSignedUrl({
 					action: "read",
-					expires: Date.now() + 60 * 60 * 1000, // 1 hour
+					expires: Date.now() + 15 * 60 * 1000, // 15 minutes is plenty
 				});
 
 				return {
@@ -92,10 +99,12 @@ export async function GET() {
 			})
 		);
 
+		console.log("Step 4: Successfully generated all signed URLs.");
 		return NextResponse.json(images);
+		// --- END OF NEW LOGS ---
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
-		console.error("Error fetching images from Firestore:", errorMessage);
+		console.error("!!! ERROR inside GET handler !!!", errorMessage);
 		return NextResponse.json(
 			{ error: "Failed to fetch images", details: errorMessage },
 			{ status: 500 }
