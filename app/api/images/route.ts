@@ -2,18 +2,22 @@ import { Firestore } from "@google-cloud/firestore";
 import { Storage } from "@google-cloud/storage";
 import { NextRequest, NextResponse } from "next/server";
 
-const firestore = new Firestore({
-	keyFilename:
-		process.env.NODE_ENV === "production"
-			? undefined
-			: "./service-account-key.json",
-});
-const storage = new Storage({
-	keyFilename:
-		process.env.NODE_ENV === "production"
-			? undefined
-			: "./service-account-key.json",
-});
+let firestore: Firestore;
+let storage: Storage;
+
+// Check if the special environment variable is available
+if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+	const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
+	firestore = new Firestore({ credentials });
+	storage = new Storage({ credentials });
+} else {
+	// Fallback for local development if the env var isn't set
+	console.warn(
+		"GCP credentials not found in environment variables. Falling back to default authentication."
+	);
+	firestore = new Firestore();
+	storage = new Storage();
+}
 
 const BUCKET_NAME = "js-image-landing";
 

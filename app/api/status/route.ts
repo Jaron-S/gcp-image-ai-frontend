@@ -1,12 +1,19 @@
 import { Firestore } from "@google-cloud/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-const firestore = new Firestore({
-	keyFilename:
-		process.env.NODE_ENV === "production"
-			? undefined
-			: "./service-account-key.json",
-});
+let firestore: Firestore;
+
+// Check if the special environment variable is available
+if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+	const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
+	firestore = new Firestore({ credentials });
+} else {
+	// Fallback for local development if the env var isn't set
+	console.warn(
+		"GCP credentials not found in environment variables. Falling back to default authentication."
+	);
+	firestore = new Firestore();
+}
 
 export async function GET(request: NextRequest) {
 	// Get the filename from the URL query, e.g., /api/status?filename=my-photo.jpg

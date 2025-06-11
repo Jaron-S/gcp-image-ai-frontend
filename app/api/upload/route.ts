@@ -1,12 +1,19 @@
 import { Storage } from "@google-cloud/storage";
 import { NextRequest, NextResponse } from "next/server";
 
-const storage = new Storage({
-	keyFilename:
-		process.env.NODE_ENV === "production"
-			? undefined
-			: "./service-account-key.json",
-});
+let storage: Storage;
+
+// Check if the special environment variable is available
+if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+	const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
+	storage = new Storage({ credentials });
+} else {
+	// Fallback for local development if the env var isn't set
+	console.warn(
+		"GCP credentials not found in environment variables. Falling back to default authentication."
+	);
+	storage = new Storage();
+}
 
 const BUCKET_NAME = "js-image-landing";
 
