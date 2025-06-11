@@ -123,7 +123,7 @@ export function ImageUpload({ onUploadSuccess }: ImageUploadProps) {
 
 	useEffect(() => {
 		return () => cleanupPolling();
-	}, []);
+	}, [cleanupPolling]);
 
 	// This component provides clear, text-based status updates
 	const StatusIndicator = () => {
