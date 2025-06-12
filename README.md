@@ -4,6 +4,8 @@ This project is a full-stack, serverless web application that leverages Google C
 
 **[Live Demo](https://image-processor.jaron-s.com)**
 
+![cloud-vision-showcase](https://github.com/user-attachments/assets/33928fe6-e460-46e6-acbd-16c1a34efdb5)
+
 ## Key Features
 
   * **Drag-and-Drop Image Upload:** An intuitive and responsive interface for uploading images.
