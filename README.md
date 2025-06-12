@@ -4,7 +4,7 @@ This project is a full-stack, serverless web application that leverages Google C
 
 **[Live Demo](https://image-processor.jaron-s.com)**
 
-![cloud-vision-showcase](https://github.com/user-attachments/assets/33928fe6-e460-46e6-acbd-16c1a34efdb5)
+![cloud-vision-frontend](https://github.com/user-attachments/assets/6abb3d85-cf5c-437b-81e8-81ab90c484e1)
 
 ## Key Features
 
