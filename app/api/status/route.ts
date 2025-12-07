@@ -2,17 +2,32 @@ import { Firestore } from "@google-cloud/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 let firestore: Firestore;
+let authError: string | null = null;
 
-// Check if the special environment variable is available
-if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
-	const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
-	firestore = new Firestore({ credentials });
-} else {
-	// Fallback for local development if the env var isn't set
-	console.warn(
-		"GCP credentials not found in environment variables. Falling back to default authentication."
-	);
-	firestore = new Firestore();
+try {
+	console.log("Initializing Google Cloud clients...");
+
+	// This check handles Netlify and local development via .env.local
+	if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+		console.log(
+			"Found GCP_SERVICE_ACCOUNT_KEY, initializing with credentials object."
+		);
+		const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
+		firestore = new Firestore({ credentials });
+	} else {
+		// This handles production on GCP/Cloud Run with an attached service account
+		// AND local development using `gcloud auth application-default login`
+		console.log(
+			"GCP_SERVICE_ACCOUNT_KEY not found. Using Application Default Credentials."
+		);
+		firestore = new Firestore();
+	}
+	console.log("Google Cloud clients initialized successfully.");
+} catch (e) {
+	authError = `Failed to initialize Google Cloud clients: ${
+		e instanceof Error ? e.message : String(e)
+	}`;
+	console.error("!!! CRITICAL AUTHENTICATION ERROR !!!", authError);
 }
 
 export async function GET(request: NextRequest) {

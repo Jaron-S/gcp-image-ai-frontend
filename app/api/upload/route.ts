@@ -2,17 +2,32 @@ import { Storage } from "@google-cloud/storage";
 import { NextRequest, NextResponse } from "next/server";
 
 let storage: Storage;
+let authError: string | null = null;
 
-// Check if the special environment variable is available
-if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
-	const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
-	storage = new Storage({ credentials });
-} else {
-	// Fallback for local development if the env var isn't set
-	console.warn(
-		"GCP credentials not found in environment variables. Falling back to default authentication."
-	);
-	storage = new Storage();
+try {
+	console.log("Initializing Google Cloud clients...");
+
+	// This check handles Netlify and local development via .env.local
+	if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+		console.log(
+			"Found GCP_SERVICE_ACCOUNT_KEY, initializing with credentials object."
+		);
+		const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
+		storage = new Storage({ credentials });
+	} else {
+		// This handles production on GCP/Cloud Run with an attached service account
+		// AND local development using `gcloud auth application-default login`
+		console.log(
+			"GCP_SERVICE_ACCOUNT_KEY not found. Using Application Default Credentials."
+		);
+		storage = new Storage();
+	}
+	console.log("Google Cloud clients initialized successfully.");
+} catch (e) {
+	authError = `Failed to initialize Google Cloud clients: ${
+		e instanceof Error ? e.message : String(e)
+	}`;
+	console.error("!!! CRITICAL AUTHENTICATION ERROR !!!", authError);
 }
 
 const BUCKET_NAME = "js-image-landing";
